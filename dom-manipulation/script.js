@@ -90,24 +90,24 @@ function loadLastViewedQuote() {
 }
 
 // Fetch quotes from server
-function fetchQuotesFromServer() {
-  fetch('https://jsonplaceholder.typicode.com/posts')
-    .then(function(response) { return response.json(); })
-    .then(function(serverQuotes) {
-      // Assuming serverQuotes has a similar structure to local quotes
-      serverQuotes.forEach(function(serverQuote) {
-        if (!quotes.find(function(localQuote) { return localQuote.text === serverQuote.title; })) {
-          quotes.push({ text: serverQuote.title, category: 'Server' });
-        }
-      });
-      
-      saveQuotes();
-      filterQuotes();
-      alert('Quotes synced with server!');
-    })
-    .catch(function(error) {
-      console.error('Error syncing with server:', error);
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const serverQuotes = await response.json();
+    
+    // Assuming serverQuotes has a similar structure to local quotes
+    serverQuotes.forEach(function(serverQuote) {
+      if (!quotes.find(function(localQuote) { return localQuote.text === serverQuote.title; })) {
+        quotes.push({ text: serverQuote.title, category: 'Server' });
+      }
     });
+    
+    saveQuotes();
+    filterQuotes();
+    alert('Quotes synced with server!');
+  } catch (error) {
+    console.error('Error syncing with server:', error);
+  }
 }
 
 // Event listeners
@@ -122,4 +122,3 @@ loadLastViewedQuote() || filterQuotes();
 
 // Periodic sync with server
 setInterval(fetchQuotesFromServer, 60000); // Sync every 60 seconds
-
