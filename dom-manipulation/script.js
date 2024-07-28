@@ -28,17 +28,33 @@ function showRandomQuote() {
 }
 
 // Add new quote
-function addQuote() {
+async function addQuote() {
   const text = document.getElementById('newQuoteText').value;
   const category = document.getElementById('newQuoteCategory').value;
   if (text && category) {
-    quotes.push({ text: text, category: category });
+    const newQuote = { text: text, category: category };
+    quotes.push(newQuote);
     saveQuotes();
     populateCategoryDropdown();
     filterQuotes();
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('Quote added successfully!');
+    
+    // Post new quote to server
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newQuote)
+      });
+      const result = await response.json();
+      console.log('Quote posted to server:', result);
+    } catch (error) {
+      console.error('Error posting to server:', error);
+    }
   } else {
     alert('Please enter both quote text and category.');
   }
