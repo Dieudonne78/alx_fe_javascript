@@ -18,12 +18,12 @@ document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 
 function addQuote() {
-  const newQuoteText = document.getElementById('newQuoteText').value;
+  const newQuoteText = document.getElementById('createAddQuoteForm').value;
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
 
-  if (newQuoteText && newQuoteCategory) {
+  if (createAddQuoteForm && newQuoteCategory) {
     quotes.push({ text: newQuoteText, category: newQuoteCategory });
-    document.getElementById('newQuoteText').value = '';
+    document.getElementById('createAddQuoteForm').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('New quote added successfully!');
   } else {
