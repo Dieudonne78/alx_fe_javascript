@@ -88,8 +88,8 @@ const loadLastViewedQuote = () => {
   if (lastViewedQuote) displayQuotes([JSON.parse(lastViewedQuote)]);
 };
 
-// Sync with server
-const syncWithServer = async () => {
+// Fetch quotes from server
+const fetchQuotesFromServer = async () => {
   try {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts');
     const serverQuotes = await response.json();
@@ -120,4 +120,4 @@ populateCategoryDropdown();
 loadLastViewedQuote() || filterQuotes();
 
 // Periodic sync with server
-setInterval(syncWithServer, 60000); // Sync every 60 seconds
+setInterval(fetchQuotesFromServer, 60000); // Sync every 60 seconds
