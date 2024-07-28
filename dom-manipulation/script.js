@@ -1,4 +1,4 @@
-// Load quotes from local storage
+
 function loadQuotes() {
   const savedQuotes = localStorage.getItem('quotes');
   if (savedQuotes) {
@@ -11,15 +11,12 @@ function loadQuotes() {
   ];
 }
 
-// Save quotes to local storage
 function saveQuotes() {
   localStorage.setItem('quotes', JSON.stringify(quotes));
 }
 
-// Array to store quotes
 const quotes = loadQuotes();
 
-// Function to display a random quote
 function showRandomQuote() {
   const quoteDisplay = document.getElementById('quoteDisplay');
   const randomIndex = Math.floor(Math.random() * quotes.length);
@@ -35,11 +32,9 @@ function showRandomQuote() {
   quoteDisplay.appendChild(quoteText);
   quoteDisplay.appendChild(quoteCategory);
 
-  // Save last viewed quote to session storage
   sessionStorage.setItem('lastViewedQuote', JSON.stringify(randomQuote));
 }
 
-// Function to add a new quote
 function addQuote() {
   const newQuoteText = document.getElementById('newQuoteText').value;
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
@@ -52,9 +47,8 @@ function addQuote() {
     document.getElementById('newQuoteCategory').value = '';
     alert('Quote added successfully!');
 
-    // Update the DOM with the new quote
     const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = '';  // Clear previous quote
+    quoteDisplay.innerHTML = '';
 
     const quoteText = document.createElement('p');
     quoteText.textContent = newQuote.text;
@@ -69,7 +63,6 @@ function addQuote() {
   }
 }
 
-// Function to export quotes to JSON file
 function exportToJsonFile() {
   const dataStr = JSON.stringify(quotes);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -81,7 +74,6 @@ function exportToJsonFile() {
   URL.revokeObjectURL(url);
 }
 
-// Function to import quotes from JSON file
 function importFromJsonFile(event) {
   const fileReader = new FileReader();
   fileReader.onload = function(event) {
@@ -93,7 +85,6 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-// Load last viewed quote from session storage
 function loadLastViewedQuote() {
   const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
   if (lastViewedQuote) {
@@ -112,11 +103,9 @@ function loadLastViewedQuote() {
   }
 }
 
-// Event listeners
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 document.getElementById('addQuoteButton').addEventListener('click', addQuote);
 document.getElementById('exportQuotes').addEventListener('click', exportToJsonFile);
 document.getElementById('importFile').addEventListener('change', importFromJsonFile);
 
-// Initial display of a random quote or last viewed quote
 loadLastViewedQuote() || showRandomQuote();
