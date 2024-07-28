@@ -5,9 +5,9 @@ function loadQuotes() {
     return JSON.parse(savedQuotes);
   }
   return [
-    { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", category: "Inspiration" },
-    { text: "The way to get started is to quit talking and begin doing.", category: "Motivation" },
-    { text: "Life is what happens when you're busy making other plans.", category: "Life" }
+    { text: "In order to write about life first you must live it.", category: "Inspiration" },
+    { text: "Keep calm and carry on.", category: "Motivation" },
+    { text: "The world is a stage and the play is badly cast", category: "Life" }
   ];
 }
 
@@ -17,20 +17,47 @@ function saveQuotes() {
 
 const quotes = loadQuotes();
 
-function showRandomQuote() {
+function getCategories() {
+  const categories = quotes.map(quote => quote.category);
+  return ['all', ...new Set(categories)];
+}
+
+function populateCategoryDropdown() {
+  const categoryFilter = document.getElementById('categoryFilter');
+  const categories = getCategories();
+  categoryFilter.innerHTML = '';
+  categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+function filterQuotes() {
+  const selectedCategory = document.getElementById('categoryFilter').value;
+  const filteredQuotes = selectedCategory === 'all' ? quotes : quotes.filter(quote => quote.category === selectedCategory);
+  displayQuotes(filteredQuotes);
+  localStorage.setItem('selectedCategory', selectedCategory);
+}
+
+function displayQuotes(quotesToDisplay) {
   const quoteDisplay = document.getElementById('quoteDisplay');
+  quoteDisplay.innerHTML = '';
+  quotesToDisplay.forEach(quote => {
+    const quoteText = document.createElement('p');
+    quoteText.textContent = quote.text;
+    const quoteCategory = document.createElement('p');
+    quoteCategory.innerHTML = `<em>Category: ${quote.category}</em>`;
+    quoteDisplay.appendChild(quoteText);
+    quoteDisplay.appendChild(quoteCategory);
+  });
+}
+
+function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
-  quoteDisplay.innerHTML = '';
-
-  const quoteText = document.createElement('p');
-  quoteText.textContent = randomQuote.text;
-
-  const quoteCategory = document.createElement('p');
-  quoteCategory.innerHTML = `<em>Category: ${randomQuote.category}</em>`;
-
-  quoteDisplay.appendChild(quoteText);
-  quoteDisplay.appendChild(quoteCategory);
+  displayQuotes([randomQuote]);
 
   sessionStorage.setItem('lastViewedQuote', JSON.stringify(randomQuote));
 }
@@ -43,21 +70,11 @@ function addQuote() {
     const newQuote = { text: newQuoteText, category: newQuoteCategory };
     quotes.push(newQuote);
     saveQuotes();
+    populateCategoryDropdown();
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('Quote added successfully!');
-
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = '';
-
-    const quoteText = document.createElement('p');
-    quoteText.textContent = newQuote.text;
-
-    const quoteCategory = document.createElement('p');
-    quoteCategory.innerHTML = `<em>Category: ${newQuote.category}</em>`;
-
-    quoteDisplay.appendChild(quoteText);
-    quoteDisplay.appendChild(quoteCategory);
+    filterQuotes();
   } else {
     alert('Please enter both quote text and category.');
   }
@@ -80,7 +97,9 @@ function importFromJsonFile(event) {
     const importedQuotes = JSON.parse(event.target.result);
     quotes.push(...importedQuotes);
     saveQuotes();
+    populateCategoryDropdown();
     alert('Quotes imported successfully!');
+    filterQuotes();
   };
   fileReader.readAsText(event.target.files[0]);
 }
@@ -89,17 +108,19 @@ function loadLastViewedQuote() {
   const lastViewedQuote = sessionStorage.getItem('lastViewedQuote');
   if (lastViewedQuote) {
     const quote = JSON.parse(lastViewedQuote);
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = '';
+    displayQuotes([quote]);
+    return true;
+  }
+  return false;
+}
 
-    const quoteText = document.createElement('p');
-    quoteText.textContent = quote.text;
-
-    const quoteCategory = document.createElement('p');
-    quoteCategory.innerHTML = `<em>Category: ${quote.category}</em>`;
-
-    quoteDisplay.appendChild(quoteText);
-    quoteDisplay.appendChild(quoteCategory);
+function loadLastSelectedCategory() {
+  const selectedCategory = localStorage.getItem('selectedCategory');
+  if (selectedCategory) {
+    document.getElementById('categoryFilter').value = selectedCategory;
+    filterQuotes();
+  } else {
+    filterQuotes();
   }
 }
 
@@ -108,4 +129,6 @@ document.getElementById('addQuoteButton').addEventListener('click', addQuote);
 document.getElementById('exportQuotes').addEventListener('click', exportToJsonFile);
 document.getElementById('importFile').addEventListener('change', importFromJsonFile);
 
-loadLastViewedQuote() || showRandomQuote();
+populateCategoryDropdown();
+loadLastViewedQuote() || loadLastSelectedCategory();
+
