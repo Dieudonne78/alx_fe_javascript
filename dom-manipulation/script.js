@@ -22,7 +22,7 @@ function getCategories() {
   return ['all', ...new Set(categories)];
 }
 
-function populateCategory() {
+function populateCategories() {
   const categoryFilter = document.getElementById('categoryFilter');
   const categories = getCategories();
   categoryFilter.innerHTML = '';
@@ -97,7 +97,7 @@ function importFromJsonFile(event) {
     const importedQuotes = JSON.parse(event.target.result);
     quotes.push(...importedQuotes);
     saveQuotes();
-    populateCategory();
+    populateCategories();
     alert('Quotes imported successfully!');
     filterQuotes();
   };
@@ -129,6 +129,6 @@ document.getElementById('addQuoteButton').addEventListener('click', addQuote);
 document.getElementById('exportQuotes').addEventListener('click', exportToJsonFile);
 document.getElementById('importFile').addEventListener('change', importFromJsonFile);
 
-populateCategory();
+populateCategories();
 loadLastViewedQuote() || loadLastSelectedCategory();
 
