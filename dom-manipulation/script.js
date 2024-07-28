@@ -5,30 +5,29 @@ const quotes = [
   { text: "Well done is better than well said. ", category: "Wisdom" }
 ];
 
-
 function showRandomQuote() {
   const quoteDisplay = document.getElementById('quoteDisplay');
   const randomIndex = Math.floor(Math.random() * quotes.length);
-  const quote = quotes[randomIndex];
-  quoteDisplay.innerHTML = `"${quote.text}" - ${quote.category}`;
+  const randomQuote = quotes[randomIndex];
+  quoteDisplay.innerHTML = `<p>${randomQuote.text}</p><p><em>Category: ${randomQuote.category}</em></p>`;
 }
 
-
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);
-
-
 function addQuote() {
-  const newQuoteText = document.getElementById('createAddQuoteForm').value;
+  const createAddQuoteForm = document.getElementById('createAddQuoteForm').value;
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
 
   if (createAddQuoteForm && newQuoteCategory) {
-    quotes.push({ text: newQuoteText, category: newQuoteCategory });
+    const newQuote = { text: createAddQuoteForm, category: newQuoteCategory };
+    quotes.push(newQuote);
     document.getElementById('createAddQuoteForm').value = '';
     document.getElementById('newQuoteCategory').value = '';
-    alert('New quote added successfully!');
+    alert('Quote added successfully!');
   } else {
-    alert('Please enter both a quote and a category.');
+    alert('Please enter both quote text and category.');
   }
 }
 
+document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 document.getElementById('addQuoteButton').addEventListener('click', addQuote);
+
+showRandomQuote();
